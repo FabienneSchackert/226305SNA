@@ -1,0 +1,694 @@
+---
+title: "226305 Forschungsbericht der Gruppe Musikszene Indie"
+author: "Silas Schwab | ss502@hdm-stuttgart.de, Fabienne Schackert | fs138@hdm-stuttgart.de, Lena Klasen | lk158@hdm-stuttgart.de, Lioba Zangenfeind | lz029@hdm-stuttgart.de, Selina Hellfritsch | sh308@hdm-stuttgart.de"
+date: "Sommersemester 2021"
+output:
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_depth: 3
+    number_sections: yes
+  word_document:
+    toc: yes
+    toc_depth: '3'
+subtitle: Analyse der Verbindungen von Indie-Bands von 2015 bis 2020
+---
+
+_Anmerkung 1_: Wir werden in unserem Forschungsbericht teilweise die Netzwerke neu erstellen und einlesen, damit die Datenbasis immer klar ist. Somit können wir in den einzelnen Teilnetzwerken sicherstellen, dass nur aktuelle Werte erfasst werden.
+
+
+# 1. Einleitung
+Im folgenden Forschungsbericht werden wir Verbindung deutscher Indie-Bands in den Jahren von 2015 bis 2020 untersuchen. 
+Dabei haben wir in den letzten Jahren die fünf größten Festivals (Southside, Rock am Ring, Fusion, Juicy Beats), in denen auch die Musikrichtung Indie vertreten ist, genauer untersucht und anhand derer 35 Akteure ausgewählt. Bei der Festivalauswahl haben wir darauf geachtet, dass sie kostenpflichtig sind, um nicht im Nachhinein ganz viele zu kleine Indie-Bands aussortieren zu müssen. Durch dieses Ausschlusskriterium ist beispielsweise das Festival Bochum Total nicht berücksichtigt worden.
+
+Die ausgewählten 35 Akteure haben wir daraufhin untersucht, ob zwei Künstler*innen gemeinsam bei einem Festival aufgetreten sind (relation=1), ein gemeinsames Musiklabel haben (relation=2), gemeinsam auf Tour gegangen sind oder Auftritte zusammen gehabt haben (relation=3) und ob sie ein gemeinsames Feature produziert haben (relation=4). 
+Anhand der erhobenen Daten wollen wir nun die Vernetzung der einzelnen Akteure genauer beleuchten. Dabei gehen wir auf die Fragen ein, ob es einen Zusammenhang zwischen gemeinsamen Features der Künstler:innen und den Auftritten auf Festivals gibt, ob das Musiklabel Einfluss auf Festivalauftritte hat, ob Künstler:innen mit mehr Spotify-Hörer:innen / Instagram-Follower:innen auch besser vernetzt sind und welche Ergebnisse die zeitliche Entwicklungen zeigen.
+
+
+# 2. Vorarbeiten und vergleichbare Studien
+## 2.1 Forschungsstand
+noch machen
+Das Forschungsdesign lehnt sich zum einen an die lange Tradition der Netzwerkanalyse in der Schulforschung an (Dunkake 2012). Es greift zudem die klassische Studie von Krackhardt (1987) auf, der ein Ratsuche und Unterstützungsnetzwerk in einem Unternehmen untersuchte. 
+
+## 2.2 Arbeitshypothesen
+Wir gehen von folgenden Arbeitshypothesen aus:
+
+a) Auftritte: Akteure, die oft auf den gleichen Festivals aufgetreten sind, haben eher ein gemeinsames Feature und haben eher gemeinsame Auftritte oder sind die Vorband des jeweils anderen Akteurs.
+b) Zusammenarbeit: Akteure, die das gleiche Musiklabel haben (relation=2), haben auch öfter auf den gleichen Festivals gespielt (relation=1).
+c) Vernetzung: Akteure, die viele Instagram-Follower:innen und Spotify-Hörer:innen haben sind auch gut mit anderen Akteuren vernetzt.
+d) Durch den zeitliche Verlauf wollen wir die Entwicklung der Vernetzung des Gesamtneztwerkes aufzeigen. Anhand dessen könnten auch einzelne Akteure herausstechen, die sich über die Jahre besser vernetzt haben.
+e) Wir wollen drei Bands auswählen, die an unserem Stichtag, dem 07.03.2021, die meisten Spotify-Hörer:innen hatten. Die Vermutung liegt nahe, dass die Vernetzung dieser Bands in den Jahren von 2015 bis 2020 gestiegen ist.
+
+wann einzelne Akteure besonders viel auf Festivals gespielt haben, wann es weniger wurde oder ab wann es zugenommen hat. Daraus kann man den Bekanntheitsgrad und die Vernetzung der Künstler:innen ableiten.
+
+Diese Arbeitshypothesen werden im Folgenden durch die Analyse des Netzwerks untersucht und entweder bestätigt oder widerlegt.
+
+# 3. Datenerhebung: Zugang, Bereinigung und Codebuch
+
+## 3.1 Datenzugang
+Die Daten haben wir über verschiedene Websites erhalten, die die Festivalauftritte der Akteure in den Jahren von 2015 bis 2020 aufzeigen (Beispiel: https://www.festivalhopper.de). Außerdem haben wir die Website der jeweiligen Akteure, den Spotify und Instagram Auftritt untersucht. Das Ganze haben wir mit einer freien Recherche über Ticket-Websites, Wikipedia, Musikmagazine & Co. ergänzt.
+
+## 3.2 Bereinigung des Datensatzes
+Der Datensatz wurde nicht anonymisiert, da die Informationen ohnehin schon öffentlich zugänglich sind. Der Datensatz ist unter [Github](https://github.com/hdm-crpr/226305/tree/master/data/crpr2) verfügbar.
+
+## 3.3 Codebuch
+Das [Codebuch](https://github.com/lz029/226305-SNA-WS-21-22/blob/main/Indie/INDIE-Codebuch.md) beschreibt die Variablen, Relationen und Gewichte des Netzwerks und ist ebenfalls auf Github hinterlegt.
+
+# 4. Analyse und Interpretation
+Im Folgenden wird zuerst das Gesamtnetzwerk und somit alle Verbindungen der 35 Indie-Bands, betrachtet. Danach folgt eine Selektion in einzelne Teilnetzwerke, um unsere Arbeitshypothesen zu untersuchen. 
+
+## 4.1 Das Gesamtnetzwerk
+
+Das Gesamtnetzwerk umfasst 35 Knoten und 1078 Beziehungen. Es handelt sich um ein ungerichtet und gewichtet One-Mode-Netzwerk. Dieses werden wir zu Beginn in R-Studio einlesen, um eine einfache Visaulisierung darzustellen und einen ersten Überblick zu erhalten.
+
+```{r Gesamnetzwerk erstellen, echo=FALSE, message=FALSE, warning=FALSE, paged.print=TRUE}
+
+library(igraph)
+
+# Einlesen der Edge- und Nodelist
+el <- read.csv("https://raw.githubusercontent.com/lz029/226305-SNA-WS-21-22/main/Indie/INDIE-Edgelist.csv", header=T, as.is=T, sep = ",")
+nodes <- read.csv("https://raw.githubusercontent.com/lz029/226305-SNA-WS-21-22/main/Indie/INDIE-Nodelist.csv", header=T, as.is=T, sep = ",")
+
+# Matrix erstellen
+edgematrix <-as.matrix(el)
+
+# Zusammenführen von Edge- und Nodelist als igraph-Objekt s
+indie <- graph_from_data_frame(d=edgematrix, vertices=nodes, directed=F)
+indie
+```
+
+```{r Beschreibung des Netzwerks, message=FALSE, warning=FALSE, paged.print=TRUE}
+# Parameter zu Beschreibung des Netzwerks
+
+## ist das Netzwerk bereits vereinfacht?
+is.simple(indie)
+
+## besteht das Netzwerk aus Komponenten?
+## wenn ja, wie vielen?
+is.connected(indie)
+components(indie)
+
+## Dichte des Netzwerks
+edge_density(indie, loops=FALSE)
+
+## Umfang des Netzwerks
+diameter(indie)
+
+## Pfaddistanzen (Distance)
+farthest_vertices(indie)
+```
+
+Das Hauptnetzwerk besteht aus einem Komponenten mit 35 Knoten, die alle miteinander verbunden sind. Die Dichte im Netzwerk beträgt 181,18 Prozent von allen möglichen Verbindungen. Somit ist das Inide-Netzwerk der 35 Akteure stark miteinander vernetzt. Die maximale Pfaddistanz beträgt 2 Schritte zwischen den zwei Akteuren "Amilli" und "Bilderbuch". 
+
+```{r Einfache Visualisierung des erstellten Objekt, fig.height=10, fig.width=14, message=TRUE, warning=TRUE, paged.print=TRUE}
+
+plot(indie,
+     vertex.frame.color="transparent", vertex.label.family = "Arial",
+      edge.color="grey",
+      layout = layout_components,
+      main="Verbindungen von Indie-Bands 2015-2020",
+     asp=0, 
+     layout=layout_with_kk,
+     edge.arrow.size=.5,
+     vertex.size=10,)
+```
+
+
+```{r sortiertere Visualisierung des Gesamtnetzwerks}
+
+# Das gesamte Netzwerk wird jetzt so visualisiert, dass man die Verbindungen durch Label, Feature oder gemeinsame Auftritte stärker und individuell visualisiert erkennen kann. Dafür werden alle Beziehungsstärke = 1, also die gemeinsamen Auftritte bei Festiavls "transpernt" geschalten.
+
+E(indie)[ (E(indie)$relation == 1) ]$color <- "transparent"
+E(indie)[ (E(indie)$relation == 2) ]$color <- "red"
+E(indie)[ (E(indie)$relation == 3) ]$color <- "green"
+E(indie)[ (E(indie)$relation == 4) ]$color <- "blue"
+      
+plot(indie,
+     vertex.frame.color="transparent", vertex.label.family = "Arial",
+      layout = layout_components,
+      main="Verbindungen der Indie-Bands 2015-2020 - ohne Beziehungsstärke 1",
+     layout=layout_with_kk,
+     asp=0,
+     vertex.size=10)
+```
+
+```{r sortiertere Visualisierung des Gesamtnetzwerks, Beziehungsstärke = 1}
+
+# Nun sollen nur die Verbindungen mit Beziehungsstärke = 1 angezeigt werden. Also alle Verbindungen, bei denen die Akteure auf dem gleichen Festival gespielt haben. Dafür werden alle anderen Beziehungsstärken auf "transparent" gesetzt. 
+
+E(indie)[ (E(indie)$relation == 1) ]$color <- "grey"
+E(indie)[ (E(indie)$relation == 2) ]$color <- "transparent"
+E(indie)[ (E(indie)$relation == 3) ]$color <- "transparent"
+E(indie)[ (E(indie)$relation == 4) ]$color <- "transparent"
+      
+plot(indie,
+     vertex.frame.color="transparent", vertex.label.family = "Arial",
+      layout = layout_components,
+      main="Verbindungen der Indie-Bands 2015-2020 - nur Beziehungsstärke 1",
+     layout=layout_with_kk,
+     asp=0,
+     vertex.size=10)
+
+```
+```{r sortiertere Visualisierung des Gesamtnetzwerks, Beziehungsstärke = 2}
+
+# Nun sollen nur die Verbindungen mit Beziehungsstärke = 2 angezeigt werden. Also alle Verbindungen über die Jahre, in denen die Akteure das gleiche Musiklabel hatten. Dafür werden alle anderen Beziehungsstärken auf "transparent" gesetzt. 
+
+E(indie)[ (E(indie)$relation == 1) ]$color <- "transparent"
+E(indie)[ (E(indie)$relation == 2) ]$color <- "red"
+E(indie)[ (E(indie)$relation == 3) ]$color <- "transparent"
+E(indie)[ (E(indie)$relation == 4) ]$color <- "transparent"
+      
+plot(indie,
+     vertex.frame.color="transparent", vertex.label.family = "Arial",
+      layout = layout_components,
+      main="Verbindungen der Indie-Bands 2015-2020 - nur Beziehungsstärke 2",
+     layout=layout_with_kk,
+     asp=0,
+     vertex.size=10)
+
+```
+```{r sortiertere Visualisierung des Gesamtnetzwerks, Beziehungsstärke = 3}
+
+# Nun sollen nur die Verbindungen mit Beziehungsstärke = 3 angezeigt werden. Also alle Verbindungen bei denen die Akteure gemeinsam auf Tour waren und/oder sich bei Auftritten gegenseitig als Vorband supported haben.Dafür werden alle anderen Beziehungsstärken auf "transparent" gesetzt. 
+
+E(indie)[ (E(indie)$relation == 1) ]$color <- "transparent"
+E(indie)[ (E(indie)$relation == 2) ]$color <- "transparent"
+E(indie)[ (E(indie)$relation == 3) ]$color <- "green"
+E(indie)[ (E(indie)$relation == 4) ]$color <- "transparent"
+      
+plot(indie,
+     vertex.frame.color="transparent", vertex.label.family = "Arial",
+      layout = layout_components,
+      main="Verbindungen der Indie-Bands 2015-2020 - nur Beziehungsstärke 3",
+     layout=layout_with_kk,
+     asp=0,
+     vertex.size=10)
+
+```
+
+```{r sortiertere Visualisierung des Gesamtnetzwerks, Beziehungsstärke = 4}
+
+# Nun sollen nur die Verbindungen mit Beziehungsstärke = 4 angezeigt werden. Also alle Verbindungen bei denen die Akteure gemeinsam ein Feature haben.Dafür werden alle anderen Beziehungsstärken auf "transparent" gesetzt. 
+
+E(indie)[ (E(indie)$relation == 1) ]$color <- "transparent"
+E(indie)[ (E(indie)$relation == 2) ]$color <- "transparent"
+E(indie)[ (E(indie)$relation == 3) ]$color <- "transparent"
+E(indie)[ (E(indie)$relation == 4) ]$color <- "blue"
+      
+plot(indie,
+     vertex.frame.color="transparent", vertex.label.family = "Arial",
+      layout = layout_components,
+      main="Verbindungen der Indie-Bands 2015-2020 - nur Beziehungsstärke 4",
+     layout=layout_with_kk,
+     asp=0,
+     vertex.size=10)
+
+```
+
+```{r Prüfung verbundener Cluster im Gesamtnetzwerk}
+# Anzahl der Clusters
+clusters(indie)
+
+# Sind die Cluster miteinander verbunden?
+is_connected(indie)
+
+# wendet die Clusterung auf das Netzwerk an
+cw <- cluster_walktrap(indie)
+cw
+
+# berechnet den Modularitätswert
+modularity(cw) 
+membership(cw)
+
+plot (cw, indie)
+plot(cw, indie, 
+     layout=layout_with_kk,
+     asp=0,
+     #edge.arrow.size=0.1,
+     vertex.size=10,
+     main="Communities im Indie Netzwerk")
+```
+
+Die Analyse zeigt: das Netzwerk besteht aus 4 miteinander verbundenen Clustern, die aus 35 Knoten bestehen.
+
+
+## 4.2 Teilnetzwerke 
+
+```{r Teilnetzwerke nach Jahren,fig.height=10, fig.width=14, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+list.edge.attributes(indie)
+edge.attributes(indie)$time
+
+# Teilnetzwerke erstellen
+y2015 <- subgraph.edges(indie, E(indie)[time=="2015"])
+y2016 <- subgraph.edges(indie, E(indie)[time=="2016"])
+y2017 <- subgraph.edges(indie, E(indie)[time=="2017"])
+y2018 <- subgraph.edges(indie, E(indie)[time=="2018"])
+y2019 <- subgraph.edges(indie, E(indie)[time=="2019"])
+y2020 <- subgraph.edges(indie, E(indie)[time=="2020"])
+
+# Visualisierung: Vergleichen aller Jahre mit dem Gesamtnetzwerk
+E(indie)[ (E(indie)$relation == 1) ]$color <- "grey"
+E(indie)[ (E(indie)$relation == 2) ]$color <- "red"
+E(indie)[ (E(indie)$relation == 3) ]$color <- "green"
+E(indie)[ (E(indie)$relation == 4) ]$color <- "blue"
+
+op <- par(mfrow=c(1,7), mar=c(1,1,1,1)) 
+plot(indie, layout=layout_in_circle, main="Gesamt")
+plot(y2015, layout=layout_in_circle, vertex.color="blue", main="Verbindungen aus dem Jahr 2015")
+plot(y2016, layout=layout_in_circle, vertex.color="green", main="Verbindungen aus dem Jahr 2016")
+plot(y2017, layout=layout_in_circle, vertex.color="red", main="Verbindungen aus dem Jahr 2017")
+plot(y2018, layout=layout_in_circle, vertex.color="yellow", main="Verbindungen aus dem Jahr 2018")
+plot(y2019, layout=layout_in_circle, vertex.color="orange", main="Verbindungen aus dem Jahr 2019")
+plot(y2020, layout=layout_in_circle, vertex.color="purple", main="Verbindungen aus dem Jahr 2020")
+par(op)
+```
+Deutlich zu erkennen ist, dass das Zerlegen der Verbindungen in Teilnetzwerke nach Jahren eine deutliche Entzerrung mit sich gebracht hat. Sofort ins Auge springt wohl das Teilnetzwerk des Jahres 2020, das durch im Vergleich deutlich weniger Kanten auffällt. Grund hierfür sind die fehlenden Festivals, die aufgrund der Covid-19-Pandemie in diesem Jahr ausblieben. Gleichzeitig sind die sonst nur sporadisch verteilten blauen Kanten, die die Verbindung zweier Knoten durch ein gemeinsames Feature (relation=4) kennzeichnet, ein Merkmal des Teilnetzwerkes 2020. Diese sind größtenteils dem "Mammut-Feature" Sanifair Millionaire zuzuschreiben, das 5 der untersuchten Bands miteinander verbindet.
+Eine weiter Auffälligkeit bringt das Teilnetzwerk des Jahres 2015 mit sich, denn auch hier gehen von einigen Bands im Vergleich zu den anderen Jahren (mit Ausnahme von 2020) deutlich weniger Kanten aus. Die Ursache hierfür findet sich vermutlich in der Tatsache, dass viele der in unserer Netzwerkanalyse untersuchten Bands im Jahr 2015 noch nicht aktiv waren oder erst im Laufe der Jahre "groß" genug wurden, um auf vielen Festivals Auftritte zu ergattern.
+
+```{r Netzwerkmaße der Teilnetzwerke nach Jahren,fig.height=10, fig.width=14, message=FALSE, warning=FALSE, paged.print=FALSE}
+#Degree-Werte der Teilnetzwerke
+d_indie <- degree(indie)
+d_indie
+which.max(d_indie)
+d_y2015 <- degree(y2015)
+d_y2015
+which.max(d_y2015)
+d_y2016 <- degree(y2016)
+d_y2016
+which.max(d_y2016)
+d_y2017 <- degree(y2017)
+which.max(d_y2017)
+d_y2018 <- degree(y2018)
+which.max(d_y2018)
+d_y2019 <- degree(y2019)
+which.max(d_y2019)
+d_y2020 <- degree(y2020)
+which.max(d_y2020)
+
+# Dichte
+edge_density(indie, loops=FALSE)
+edge_density(y2015, loops=FALSE)
+edge_density(y2016, loops=FALSE)
+edge_density(y2017, loops=FALSE)
+edge_density(y2018, loops=FALSE)
+edge_density(y2019, loops=FALSE)
+edge_density(y2020, loops=FALSE)
+```
+
+Betrachtet man die Dichten der sechs Teilnetzwerke, liegt die höchste Dichte bei 2017 mit 66,13 Prozent, dicht gefolgt von 2018 mit 64,53 Prozent. Wenig verwunderlich ist das Jahr 2020, das sich wie im vorherigen Abschnitt bereits beschrieben vor allem durch die fehlenden Festival-Verbindungen auszeichnet. Insofern ist die bei lediglich 18,97 Prozent liegende Dichte in diesem Jahr keine Überraschung.
+
+```{r Erneutes einlesen des Gesamnetzwerk, echo=FALSE, message=FALSE, warning=FALSE, paged.print=TRUE}
+library(igraph)
+# Einlesen der Edge- und Nodelist
+el <- read.csv("https://raw.githubusercontent.com/lz029/226305-SNA-WS-21-22/main/Indie/INDIE-Edgelist.csv", header=T, as.is=T, sep = ",")
+nodes <- read.csv("https://raw.githubusercontent.com/lz029/226305-SNA-WS-21-22/main/Indie/INDIE-Nodelist.csv", header=T, as.is=T, sep = ",")
+# Matrix erstellen
+edgematrix <-as.matrix(el)
+# Zusammenführen von Edge- und Nodelist als igraph-Objekt s
+indie <- graph_from_data_frame(d=edgematrix, vertices=nodes, directed=F)
+indie
+```
+
+```{r Teilnetzwerke nach Relations}
+
+# Um die Verteilung nach Relations besser veranschaulichen zu können, werden Teilnetzwerke nach den unterschiedlichen Verbindungen (1-4) sortiert und anschließend auf ihre Netzwerkmaße überprüft
+
+indie1 <- subgraph.edges(indie, E(indie)[relation=="1"])
+plot(indie1)
+
+indie2 <- subgraph.edges(indie, E(indie)[relation=="2"])
+plot(indie2)
+
+indie3 <- subgraph.edges(indie, E(indie)[relation=="3"])
+plot(indie3)
+
+indie4 <- subgraph.edges(indie, E(indie)[relation=="4"])
+plot(indie4)
+```
+
+```{r Teilnetzwerke nach Relations und ihre Netzwerkmaße}
+
+# Netzwerkmaße Teilnetzwerk Relation 1 
+
+edge_density(indie1)
+degree(indie1)
+
+# Netzwerkmaße Teilnetzwerk Relation 2 
+
+edge_density(indie2)
+degree(indie2)
+
+# Netzwerkmaße Teilnetzwerk Relation 3 
+
+edge_density(indie3)
+degree(indie3)
+
+# Netzwerkmaße Teilnetzwerk Relation 4
+
+edge_density(indie4)
+degree(indie4)
+
+```
+Bei der Betrachtung der Teilnetzwerke nach Relations und deren Netzwerkmaße fällt auf, wie es sich auch schon in den vorangegangenen Visualisierungen angedeutet hat, die Netzwerkdichte nach lässt um so intensiver bzw. stärker die Verbindung der Künstler:innen wird. Auch lassen sich bei den Beziehungen 2-4 einzelne Gruppierungen erkennen in denen mehrere Künstler vernetzt sind.
+
+##4.3 Analyse eines herausgehobenen Akteurs in Egonetzwerken 
+Da unser Netzwerk sehr viele Akteure und sehr viele Verbindungen zeigt wollen wir uns im Folgenden auf einen Akteur fixieren. Hierfür wählen wir die Band mit der stärksten Vernetzung, also dem höchsten Degreewert. Um anschließend nach Jahren geordnete Egonetzwerke zu erstellen die die Kollaborationen deutlicher darstellen sollen.
+
+```{r Analyse eines herausgehobenen Akteurs in Egonetzwerken}
+# Im Folgenden sollen die Kollaborationen einer Band explizit analysiert werden. Hierfür wählen wir die Band mit dem höchsten Degreewert.
+
+# degree-Werte bestimmen
+i_deg <- degree(indie)
+i_deg
+
+#höchster degree-Wert auslesen
+which.max(degree(indie))
+# Von wegen Lisbeth ist die Band mit dem höchsten Degreewert, wie man auch schon oben auslesen konnte
+
+#Um die Kollaborationen von Von wegen Lisbeth übersichtlicher zu zeigen, teilen wir sie nach Jahren ein und erstellen Egonetzwerke, die die Entwicklung der Von wegen Lisbeth-Zusammenarbeiten über die Jahre hinweg anzeigen.
+
+# In Jahre einteilen
+vwl2015 <- subgraph.edges(indie, E(indie)[time=="2015"])
+vwl2016 <- subgraph.edges(indie, E(indie)[time=="2016"])
+vwl2017 <- subgraph.edges(indie, E(indie)[time=="2017"])
+vwl2018 <- subgraph.edges(indie, E(indie)[time=="2018"])
+vwl2019 <- subgraph.edges(indie, E(indie)[time=="2019"])
+vwl2020 <- subgraph.edges(indie, E(indie)[time=="2020"])
+
+# Egonetzwerk von Von wegen Lisbeth zu den einzelnen Jahren erstellen
+## 2015
+ego2015 <- make_ego_graph(vwl2015, order = 1, nodes = V(vwl2015)$name == "Von wegen Lisbeth", mode ="all")
+ego2015 <- ego2015[[1]]
+ego2015
+
+# Egonetzwerk von Von wegen Lisbeth zu den einzelnen Jahren erstellen
+## 2016
+ego2016 <- make_ego_graph(vwl2016, order = 1, nodes = V(vwl2016)$name == "Von wegen Lisbeth", mode ="all")
+ego2016 <- ego2016[[1]]
+ego2016
+
+# Egonetzwerk von Von wegen Lisbeth zu den einzelnen Jahren erstellen
+## 2017
+ego2017 <- make_ego_graph(vwl2017, order = 1, nodes = V(vwl2017)$name == "Von wegen Lisbeth", mode ="all")
+ego2017 <- ego2017[[1]]
+ego2017
+
+# Egonetzwerk von Von wegen Lisbeth zu den einzelnen Jahren erstellen
+## 2018
+ego2018 <- make_ego_graph(vwl2018, order = 1, nodes = V(vwl2018)$name == "Von wegen Lisbeth", mode ="all")
+ego2018 <- ego2018[[1]]
+ego2018
+
+# Egonetzwerk von Von wegen Lisbeth zu den einzelnen Jahren erstellen
+## 2019
+ego2019 <- make_ego_graph(vwl2019, order = 1, nodes = V(vwl2019)$name == "Von wegen Lisbeth", mode ="all")
+ego2019 <- ego2019[[1]]
+ego2019
+
+# Egonetzwerk von Von wegen Lisbeth zu den einzelnen Jahren erstellen
+## 2020
+ego2020 <- make_ego_graph(vwl2020, order = 1, nodes = V(vwl2020)$name == "Von wegen Lisbeth", mode ="all")
+ego2020 <- ego2020[[1]]
+ego2020
+
+# Zuletzt werden alle Egonetzwerke neben- und übereinander visualisiert um sie vergleichen zu können.
+
+par(mfrow=c(2,3), mar=c(1,1,1,1))
+
+## Jahr 2015
+
+# Netzwerk entzerren
+l <- layout_with_fr(ego2015)
+l <- norm_coords(l, ymin=-1, ymax=1, xmin=-1, xmax=1)
+
+# Verbindungen erster Ordnung hervorheben
+inc.edges <- incident(ego2015,  V(ego2015)[name=="Von wegen Lisbeth"], mode="all")
+
+# Knoten und Kanten speziell einfärben
+ecol <- rep("grey80", ecount(ego2015))
+ecol[inc.edges] <- "orange"
+vcol <- rep("grey40", vcount(ego2015))
+vcol[V(ego2015)$name=="Von wegen Lisbeth"] <- "gold"
+plot(ego2015, 
+     vertex.color=vcol, 
+     edge.color=ecol,
+     vertex.label.color="black",
+     vertex.frame.color="transparent",
+     rescale=F, layout=l*1,
+     main="'Von wegen Lisbeth' 2015")
+
+## Jahr 2016
+
+# Netzwerk entzerren
+l <- layout_with_fr(ego2016)
+l <- norm_coords(l, ymin=-1, ymax=1, xmin=-1, xmax=1)
+
+# Verbindungen erster Ordnung hervorheben
+inc.edges <- incident(ego2016,  V(ego2016)[name=="Von wegen Lisbeth"], mode="all")
+
+# Knoten und Kanten speziell einfärben
+ecol <- rep("grey80", ecount(ego2016))
+ecol[inc.edges] <- "orange"
+vcol <- rep("grey40", vcount(ego2016))
+vcol[V(ego2016)$name=="Von wegen Lisbeth"] <- "gold"
+plot(ego2016, 
+     vertex.color=vcol, 
+     edge.color=ecol,
+     vertex.label.color="black",
+     vertex.frame.color="transparent",
+     rescale=F, layout=l*1,
+     main="'Von wegen Lisbeth' 2016")
+
+## Jahr 2017
+
+# Netzwerk entzerren
+l <- layout_with_fr(ego2017)
+l <- norm_coords(l, ymin=-1, ymax=1, xmin=-1, xmax=1)
+
+# Verbindungen erster Ordnung hervorheben
+inc.edges <- incident(ego2017,  V(ego2017)[name=="Von wegen Lisbeth"], mode="all")
+
+# Knoten und Kanten speziell einfärben
+ecol <- rep("grey80", ecount(ego2017))
+ecol[inc.edges] <- "orange"
+vcol <- rep("grey40", vcount(ego2017))
+vcol[V(ego2017)$name=="Von wegen Lisbeth"] <- "gold"
+plot(ego2017, 
+     vertex.color=vcol, 
+     edge.color=ecol,
+     vertex.label.color="black",
+     vertex.frame.color="transparent",
+     rescale=F, layout=l*1,
+     main="'Von wegen Lisbeth' 2017")
+
+## Jahr 2018
+
+# Netzwerk entzerren
+l <- layout_with_fr(ego2018)
+l <- norm_coords(l, ymin=-1, ymax=1, xmin=-1, xmax=1)
+
+# Verbindungen erster Ordnung hervorheben
+inc.edges <- incident(ego2018,  V(ego2018)[name=="Von wegen Lisbeth"], mode="all")
+
+# Knoten und Kanten speziell einfärben
+ecol <- rep("grey80", ecount(ego2018))
+ecol[inc.edges] <- "orange"
+vcol <- rep("grey40", vcount(ego2018))
+vcol[V(ego2018)$name=="Von wegen Lisbeth"] <- "gold"
+plot(ego2018, 
+     vertex.color=vcol, 
+     edge.color=ecol,
+     vertex.label.color="black",
+     vertex.frame.color="transparent",
+     rescale=F, layout=l*1,
+     main="'Von wegen Lisbeth' 2018")
+
+## Jahr 2019
+
+# Netzwerk entzerren
+l <- layout_with_fr(ego2019)
+l <- norm_coords(l, ymin=-1, ymax=1, xmin=-1, xmax=1)
+
+# Verbindungen erster Ordnung hervorheben
+inc.edges <- incident(ego2019,  V(ego2019)[name=="Von wegen Lisbeth"], mode="all")
+
+# Knoten und Kanten speziell einfärben
+ecol <- rep("grey80", ecount(ego2019))
+ecol[inc.edges] <- "orange"
+vcol <- rep("grey40", vcount(ego2019))
+vcol[V(ego2019)$name=="Von wegen Lisbeth"] <- "gold"
+plot(ego2019, 
+     vertex.color=vcol, 
+     edge.color=ecol,
+     vertex.label.color="black",
+     vertex.frame.color="transparent",
+     rescale=F, layout=l*1,
+     main="'Von wegen Lisbeth' 2019")
+
+## Jahr 2020
+
+# Netzwerk entzerren
+l <- layout_with_fr(ego2020)
+l <- norm_coords(l, ymin=-1, ymax=1, xmin=-1, xmax=1)
+
+# Verbindungen erster Ordnung hervorheben
+inc.edges <- incident(ego2020,  V(ego2020)[name=="Von wegen Lisbeth"], mode="all")
+
+# Knoten und Kanten speziell einfärben
+ecol <- rep("grey80", ecount(ego2020))
+ecol[inc.edges] <- "orange"
+vcol <- rep("grey40", vcount(ego2020))
+vcol[V(ego2020)$name=="Von wegen Lisbeth"] <- "gold"
+plot(ego2020, 
+     vertex.color=vcol, 
+     edge.color=ecol,
+     vertex.label.color="black",
+     vertex.frame.color="transparent",
+     rescale=F, layout=l*1,
+     main="'Von wegen Lisbeth' 2020")
+
+par(mfrow=c(1,1), mar=c(1,1,1,1))
+```
+Wie sich herausgestellt hat, ist die Band Von wegen Lisbeth am stärksten mit den anderen untersuchten Indie-Bands vernetzt. Über die sechsjährige Zeitspanne hat sie einen Degreewert von 154 erreicht. Dies geht besonders auf viele Festivalauftritte aber auch sonstige Kollaborationen mit fast allen Bands aus dem Netzwerk zurück. 
+Schaut man sich nun zusätzlich die Zusammenarbeiten verteilt über die einzelnen Jahre an, kann mann man feststellen, dass die 2006 gegründete Band in den Jahren 2015-2018 sich immer stärker vernetzt hat. Und in der Tat hat die Erfolgsgeschichte von Von wegen Lisbeth mit der engen Zusammenarbeit mit AnnenMayKantereit ab 2014 begonnen. Diese Zusammenarbeit lässt sich somit auch hier als eine der einzigen im Jahr 2015 erkennen. In diesem Jahr war Von wegen Lisbeth Vorband auf der AnnenMayKantereit-Tour "Störung im Betriebsablauf". Sie bleiben auch in den nächsten Jahren ein steter Begleiter, aber Von wegen Lisbeth beginnt sich auch mit anderen Bands stark zu vernetzen. So sind 2016 schon viel mehr Kollaborationen erkennbar, die insbesondere von gemeinsamen Festivalauftritten her rühren. 
+Besonders auffällig eng vernetzt sind Von wegen Lisbeth 2016 mit Giant Rooks. 2017 sind diese ebenfalls am engsten an Von wegen Lisbeth, gemeinsam mit Milliarden, Kraftklub und Fil Bo Riva. 2018 wird selbst dieses aufgedröselte Teilnetzwerk wieder sehr unübersichtlich, da Von wegen Lisbeth äußerst aktiv ist. Neben den genannten Akteuren sind nun auch Leoniden und Bosse häufig auf den selben Bühnen gesehen. 2019 nehmen die Kollaborationen dann wieder ab. Insbesondere sind Von wegen Lisbeth jetzt mit ihrer neuen Platte unterwegs und kollaborieren in dieser Zeit fast nur mit Vorbands. Aus unserer Untersuchung sind das insbesondere Milliarden und Blond.
+Blond prägt auch unsere Untersuchung für das Jahr 2020 am stärksten dort erscheint nämlich das von Blond initiierte Feature "Sanifair-Millionär" wo unter anderem Von wegen Lisbeth, Drangsal, Rikas, Leoniden und Fibel mitwirken. Ansonsten hat Von wegen Lisbeth 2020 aufgrund der Pandemie kaum Kollaborationen vorzuweisen.
+Es scheint, dass eine Band wie Von wegen Lisbeth in den ersten Jahren des Erfolgs (2015-2018) viele Verbindungen zu ähnlichen Bands aufbaut, viel spielt und viel unterwegs ist. Mit dem größeren Erfolg, den die Band 2019 erreicht kann sie sich leisten eigene Vorbands dazuzuholen, weniger Festivals zu spielen und musikalische Projekte mit anderen Bands einzugehen. Die bloße Masse an Kollaborationen nimmt hierdurch aber ab.
+
+## 4.4 Zusammenhang zwischen Degree-Wert und Spotify/Instagram 
+
+```{r Zusammenhang höchster Degree mit Spotify-Hörer:innen bzw. Instagram Follower:innen} 
+
+#Sind die Künstler:innen mit den meisten Spotify-Hörer:innen bzw die Follower:innen auch am besten vernetzt?
+#Spotify Platz 1 - Milky Chance
+#Spotify Platz 2 - Annenmaykantereit
+#Spotify Platz 3 - Milky Chance
+
+# degree Gesamtnetzwerk berechnen
+
+dindie <- degree(indie)
+dindie
+plot(dindie)
+
+Den höchsten degree-Wert hat wie bereits festgestellt die Band Von Wegen Lisbeth mit einem Wert von 154, gefolgt von Annenmaykantereit mit 117 und Leoniden mit 107. Vergleicht man alle Bands und Künstler*innen anhand ihres degree-Wert, den Spotify-Hörer*innen sowie Instagram-Follower*innen ergeben sich unter anderem folgende Auffälligkeiten:
+
+- Annenmaykantereit bei allen drei Kategorien unter den Top 2
+- viele Bands spielen sich komplett im unteren Drittel der Tabelle hab, was einen Zusammenhang bedeuten kann
+- vielen Bands komplett im oberen Drittel
+- Faktoren wie internationale Bekanntheit führen dazu das manche Bands einen eher niedrigen degree im Vergleich zu ihren Follower*innen und Hörer*innen haben (Milky Chance)
+- andere Bekanntheitsfaktoren neben der Musik führen dazu das Follower*innenzahl viel höher ist als der Rest (Olli Schulz - fest und flauschig)
+- Bands wie Provinz, die erst in Coronazeiten wirklich bekannt wurden haben einen vergleichsweise niedrigen degree trotz hoher Hörer*innen - und Follower*innenanzahl
+- es gibt scheinbare "Festivalbands" die weder besonders hohe Follower*innen- noch Hörer*innenanzahl haben und dennoch einen vergleichsweise hohen degree
+
+```     
+
+## 5. Disskussion, Fazit und Auslick 
+
+```{r Diskussion, Fazit & Ausblick}
+# Diskussion: Fazit, Limitationen und Ausblick
+Hier findet die Diskussion der Ergebnisse statt:
+- Wurden anfangs Arbeitshypothesen aufgestellt? Lassen sich diese bestätigen oder widerlegen?
+- Welche (neuen) Erkenntnisse hat die Analyse gebracht?
+- Wo liegen die Limitationen in der Studie?
+- Was könnten nächste Schritte in der Forschung sein?
+
+# Anlage noch ausfüllen
+```
+
+  
+## 6. Literatur 
+
+Dunkake I. (2012). Soziale Netzwerke von Schülern: Beispiele angewandter Netzwerkanalysen. In: Hennig M. & Stegbauer C. (Hg.): Die Integration von Theorie und Methode in der Netzwerkforschung. Wiesbaden: VS Verlag für Sozialwissenschaften, S. 133-155.
+
+Hummel & Sodeur (2010). Dyaden und Triaden. In: Stegbauer, C. & Häußling, R. (Hg.): Handbuch Netzwerkforschung. Wiesbaden: VS Verlag, S.  
+
+Krackhardt D. (1987). Cognitive social structures. Social Networks, 9, 104-134.  
+
+Luke, D. A. (2015). A user´s guide to network analysis in R. Cham, Switzerland: Springer.  
+
+Ognyanova, K.(2019). Network Visualization with R. Sunbelt 2019 Workshop, Montreal, Canada. www.kateto.net/sunbelt2019   
+
+## 7. Codebuch
+[Codebuch](https://github.com/hdm-crpr/226305/blob/master/data/crpr2/codebuch.md)
+
+```{r Übersicht Netzwerkattribute}
+list.vertex.attributes(indie)
+# vertex.attributes(s)
+list.edge.attributes(indie)
+# edge.attributes(s)
+
+
+
+Das Netzwerk hat nach dem [Codebuch](https://github.com/lz029/226305-SNA-WS-21-22/blob/main/Indie/INDIE-Codebuch.md) folgende Attribute:
+
+*Vertex-Attribute*
+id
+Identische ID wie aus der Edgelist zur Identifikation der Knoten
+
+name
+Name des/der Künstler_in bzw. Band
+
+personen
+Anzahl der Mitglieder
+
+musiklabel
+Aktuelles und frühere Musiklabel der Band bzw. Künster_in
+
+instagram
+Anzahl der Instagram-Follower_innen zum Stichtag 07.03.2021 in Tausenden
+
+spotify
+Monatliche Hörer_innen auf Spotify zum Stichtag 07.03.2021 in Tausenden
+
+Die Vertex-Attribute treffen auf alle Knoten zu.
+
+*Edge-Attribute*
+id
+(eindeutige Codierung des Knoten)
+codiert nach den ersten vier Buchstaben der Künstler_innen und Bands, jede ID entspricht einem/einer Künstler_in bzw. Band
+
+weight
+Beziehungsstärke
+4 = Feature (Gemeinsamer Song)
+3 = Gemeinsam auf Tour / gemeinsame Auftritte / Support
+2 = gemeinsames Musiklabel
+1 = Auf dem selben Festival
+
+time
+Jahreszahl der Kooperation als YYYY
+
+source
+Informationsquelle zu der Kooperation
+
+what
+Art der Kooperation
+
+Die Edge-Attribute treffen auf alle Verbindungen zu.
+
+
+## Datenmaterial und Skript
+[Datensatz](https://github.com/lz029/226305-SNA-WS-21-22/tree/main/Indie)
+
+## Team, Arbeitsaufwand und Lessons Learned
+
+### Teammitglieder
+Silas Schwab (ss502)
+Fabienne Schackert (fs138)
+Lena Klasen (lk158)
+Lioba Zangenfeind (lz029)
+Selina Hellfritsch (sh308)
+
+### Arbeitsaufwand und Rollen im Team
+NN: Projektleitung und Coding, ca. 80 Stunden
+NN: Literaturrecherche und Auswertung, ca. 80 Stunden
+NN: Endbericht und Visualiserung, ca. 80 Stunden
+
+
+### Lessons learned
+Bitte beschreiben Sie kurz als Team, was ihre größte Herausforderung war und was der größte Lernerfolg in dem Projekt. 
+```
